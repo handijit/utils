@@ -1,13 +1,22 @@
 {
-  "name": "@ahmetilhn/handy-utils",
-  "version": "4.2.0",
+  "name": "@handijit/utils",
+  "version": "1.0.0",
   "description": "Handy utils offers developers a powerful and easy-to-use toolset. With its clean, modular and scalable code structure, it accelerates development processes and reduces code complexity. With a wide range of functions, it offers ready-made methods for solving common problems.",
   "author": "Ahmet ilhan <ahmetilhan.dev@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handijit/utils.git"
+  },
+  "homepage": "https://github.com/handijit/utils#readme",
+  "bugs": {
+    "url": "https://github.com/handijit/utils/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "publisher": "Ahmet ilhan",
-  "repository": "https://github.com/ahmetilhn/handy-utils.git",
   "scripts": {
     "build": "sh ./scripts/prod-build.sh",
     "dev": "sh ./scripts/dev-build.sh",

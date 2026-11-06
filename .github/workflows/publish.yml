@@ -69,10 +69,10 @@ jobs:
           WORK="$(mktemp -d)"
           cd "$WORK"
           npm init -y >/dev/null
-          npm install --ignore-scripts "$GITHUB_WORKSPACE"/ahmetilhn-handy-utils-*.tgz
+          npm install --ignore-scripts "$GITHUB_WORKSPACE"/handijit-utils-*.tgz
 
           cat > smoke.cjs <<'EOF'
-          const { isDeepEqual, deepClone } = require("@ahmetilhn/handy-utils");
+          const { isDeepEqual, deepClone } = require("@handijit/utils");
           if (isDeepEqual(new URL("https://a.com"), new URL("https://b.com"))) {
             throw new Error("isDeepEqual is broken");
           }

@@ -1,8 +1,8 @@
-# handy-utils
+# @handijit/utils
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@ahmetilhn/handy-utils"><img alt="npm version" src="https://img.shields.io/npm/v/@ahmetilhn/handy-utils.svg" /></a>
-  <a href="https://www.npmjs.com/package/@ahmetilhn/handy-utils"><img alt="npm downloads" src="https://img.shields.io/npm/dy/@ahmetilhn/handy-utils" /></a>
+  <a href="https://www.npmjs.com/package/@handijit/utils"><img alt="npm version" src="https://img.shields.io/npm/v/@handijit/utils.svg" /></a>
+  <a href="https://www.npmjs.com/package/@handijit/utils"><img alt="npm downloads" src="https://img.shields.io/npm/dy/@handijit/utils" /></a>
   <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue" /></a>
 </p>
 
@@ -48,11 +48,11 @@ evergreen release since 2022.
 ## Installation
 
 ```bash
-npm install @ahmetilhn/handy-utils
+npm install @handijit/utils
 ```
 
 ```bash
-yarn add @ahmetilhn/handy-utils
+yarn add @handijit/utils
 ```
 
 ## Quick start
@@ -60,7 +60,7 @@ yarn add @ahmetilhn/handy-utils
 Everything is a named export, so bundlers drop what you do not use.
 
 ```ts
-import { isDeepEqual, deepClone, isDefined, sleep } from "@ahmetilhn/handy-utils";
+import { isDeepEqual, deepClone, isDefined, sleep } from "@handijit/utils";
 
 isDeepEqual({ a: [1, 2] }, { a: [1, 2] }); // true
 deepClone(new Map([["k", { n: 1 }]])); // a real Map, deeply copied
@@ -74,7 +74,7 @@ await sleep(200);
 CommonJS works the same way:
 
 ```js
-const { isDeepEqual } = require("@ahmetilhn/handy-utils");
+const { isDeepEqual } = require("@handijit/utils");
 ```
 
 ---
@@ -724,7 +724,7 @@ import {
   isDefined,
   watcher,
   type WatcherCallback,
-} from "@ahmetilhn/handy-utils";
+} from "@handijit/utils";
 ```
 
 Every `is*` function is a type predicate, so narrowing works in conditionals,
@@ -813,4 +813,4 @@ the version already on npm and skips the release.
 
 ## License
 
-MIT © [Ahmet ilhan](https://github.com/ahmetilhn)
+MIT © [Han Dijit](https://github.com/handijit)
