@@ -1,4 +1,4 @@
-import NodeEnum from "../enums/NodeEnum";
+import NodeEnum from "../enums/node.enum";
 import getNode from "../helpers/node.helper";
 
 /**

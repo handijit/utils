@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- the only constraint every function type satisfies
 type AnyFunction = (...args: any[]) => any;
 
+/** Options accepted by `debounce`. */
 type DebounceOptions = {
   /** Invoke on the leading edge of the window. */
   leading?: boolean;
@@ -9,6 +11,7 @@ type DebounceOptions = {
   maxWait?: number;
 };
 
+/** The debounced wrapper returned by `debounce`. */
 type Debounced<T extends AnyFunction> = {
   (
     this: ThisParameterType<T>,
@@ -22,6 +25,7 @@ type Debounced<T extends AnyFunction> = {
   pending: () => boolean;
 };
 
+/** Delays `fn` until `wait` ms have passed without another call. */
 const debounce = <T extends AnyFunction>(
   fn: T,
   wait: number,
@@ -93,6 +97,7 @@ const debounce = <T extends AnyFunction>(
     const isInvoking = shouldInvoke(time);
 
     lastArgs = args;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- the receiver is replayed on a later timer tick
     lastThis = this;
     lastCallTime = time;
 

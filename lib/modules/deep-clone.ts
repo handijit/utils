@@ -16,13 +16,15 @@ const copyOwnKeys = (
   const keys: Array<string | symbol> = Object.keys(source);
   const symbols = Object.getOwnPropertySymbols(source);
   for (let i = 0; i < symbols.length; i++) {
-    if (Object.prototype.propertyIsEnumerable.call(source, symbols[i])) {
-      keys.push(symbols[i]);
+    if (
+      Object.prototype.propertyIsEnumerable.call(source, symbols[i] as symbol)
+    ) {
+      keys.push(symbols[i] as symbol);
     }
   }
 
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+    const key = keys[i] as string | symbol;
     target[key] = clone(
       (source as Record<string | symbol, unknown>)[key],
       seen
@@ -103,7 +105,11 @@ const clone = <T>(val: T, seen: WeakMap<object, unknown>): T => {
           seen
         );
       }
-      copyOwnKeys(error, copy as unknown as Record<string | symbol, unknown>, seen);
+      copyOwnKeys(
+        error,
+        copy as unknown as Record<string | symbol, unknown>,
+        seen
+      );
       return copy as unknown as T;
     }
 
@@ -157,7 +163,7 @@ const copyOwnKeysExceptIndices = (
 ): void => {
   const keys = Object.keys(source);
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+    const key = keys[i] as string;
     // Array index keys were already handled by the positional copy above.
     if (String(Number(key)) === key) continue;
     (target as unknown as Record<string, unknown>)[key] = clone(

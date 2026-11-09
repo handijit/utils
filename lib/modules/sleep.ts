@@ -1,3 +1,4 @@
+/** Resolves after `time` milliseconds. */
 const sleep = (time: number): Promise<void> => {
   return new Promise((resolve) => {
     // The arrow discards setTimeout's arguments so the promise resolves with undefined; passing
