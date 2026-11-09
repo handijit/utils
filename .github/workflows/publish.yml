@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write # push the release tag and create the GitHub Release
-  id-token: write # OIDC for npm trusted publishing; provenance is generated automatically
+  id-token: write # signs the npm provenance statement
 
 concurrency:
   group: publish-${{ github.ref }}
@@ -28,10 +28,6 @@ jobs:
           node-version: "26"
           registry-url: "https://registry.npmjs.org"
           cache: npm
-
-      # Trusted publishing needs npm CLI 11.5.1 or newer.
-      - name: Update npm
-        run: npm install -g npm@11
 
       # Dependency lifecycle scripts are an arbitrary-code-execution path during install.
       - name: Install dependencies
@@ -131,11 +127,12 @@ jobs:
           node esm.mjs
           node cjs.cjs
 
-      # OIDC: the identity is GitHub's token, so there is no npm token in this workflow.
       # prepublishOnly re-runs `npm run verify` here as the last gate.
       - name: Publish
         if: steps.check.outputs.publish == 'true'
-        run: npm publish --access public
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Tag the release
         if: steps.check.outputs.publish == 'true'

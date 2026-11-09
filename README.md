@@ -1250,9 +1250,9 @@ Releases are automatic and happen only from CI:
 
 The publish workflow then lints, type-checks, tests, builds, checks the size
 budget, lints the package (`publint`, `attw`), smoke-tests the packed tarball in
-a clean project through both `import` and `require`, publishes to npm through
-trusted publishing (OIDC, no token, provenance attached), pushes a `v<version>`
-tag and creates a GitHub Release from the CHANGELOG section.
+a clean project through both `import` and `require`, publishes to npm with
+provenance attached, pushes a `v<version>` tag and creates a GitHub Release from
+the CHANGELOG section.
 
 A commit that does not change the version is not an error — the workflow sees
 the version already on npm and skips the release.

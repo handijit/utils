@@ -39,8 +39,8 @@ old and new behaviour side by side.
   `build/index.cjs`. `require("@handijit/utils")` is unaffected.
 - The ESM and CommonJS files are published unminified; consumers' bundlers
   minify them.
-- Releases are published from CI through npm trusted publishing (OIDC) and get
-  a GitHub Release with the matching section of this file.
+- Releases published from CI get a GitHub Release with the matching section of
+  this file.
 
 ### Removed
 
