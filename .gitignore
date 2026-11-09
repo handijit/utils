@@ -1,8 +1,7 @@
 node_modules/
 build/
 coverage/
-package/
-
+*.tgz
 *.log
 npm-debug.log*
 .DS_Store
@@ -10,7 +9,6 @@ npm-debug.log*
 .vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
-!.vscode/tasks.json
 !.vscode/extensions.json
 .env
 .env.local

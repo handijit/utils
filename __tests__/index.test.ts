@@ -1,5 +1,7 @@
-import * as handyUtils from "@/index";
-import NodeEnum from "@/enums/NodeEnum";
+import { describe, expect, test } from "vitest";
+
+import * as handyUtils from "../lib/index";
+import NodeEnum from "../lib/enums/node.enum";
 
 const EXPECTED_EXPORTS = [
   "debounce",
@@ -34,7 +36,9 @@ describe("public entry point", () => {
   });
 
   test("should not expose anything beyond the documented surface", () => {
-    expect(Object.keys(handyUtils).sort()).toEqual([...EXPECTED_EXPORTS].sort());
+    expect(Object.keys(handyUtils).sort()).toEqual(
+      [...EXPECTED_EXPORTS].sort()
+    );
   });
 
   test("exports should be usable through the barrel", () => {
@@ -50,7 +54,9 @@ describe("NodeEnum", () => {
     expect(NodeEnum.STRING).toBe(Object.prototype.toString.call(""));
     expect(NodeEnum.NUMBER).toBe(Object.prototype.toString.call(1));
     expect(NodeEnum.BOOLEAN).toBe(Object.prototype.toString.call(true));
-    expect(NodeEnum.FUNCTION).toBe(Object.prototype.toString.call(function () {}));
+    expect(NodeEnum.FUNCTION).toBe(
+      Object.prototype.toString.call(function () {})
+    );
     expect(NodeEnum.UNDEFINED).toBe(Object.prototype.toString.call(undefined));
     expect(NodeEnum.NULL).toBe(Object.prototype.toString.call(null));
     expect(NodeEnum.DATE).toBe(Object.prototype.toString.call(new Date()));

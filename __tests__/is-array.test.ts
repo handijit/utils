@@ -1,4 +1,6 @@
-import isArray from "@/modules/is-array";
+import { describe, expect, test } from "vitest";
+
+import isArray from "../lib/modules/is-array";
 describe("isArray  tests", () => {
   test("should return false while param is equal object", () => {
     expect(isArray({})).toBeFalsy();

@@ -1,3 +1,4 @@
+/** Receives every change made through a `watcher` proxy. */
 type WatcherCallback<T extends object> = (
   key: keyof T,
   /** `undefined` when the key was deleted. */
@@ -5,6 +6,7 @@ type WatcherCallback<T extends object> = (
   previous: T[keyof T] | undefined
 ) => void;
 
+/** Wraps `target` in a proxy that reports every assignment and deletion. */
 const watcher = <T extends object>(
   target: T,
   onChange: WatcherCallback<T>

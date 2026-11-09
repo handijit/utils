@@ -1,4 +1,4 @@
-name: Publish to NPM
+name: Publish to npm
 
 on:
   push:
@@ -6,34 +6,35 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # to push the release tag
-  id-token: write # for npm provenance
+  contents: write # push the release tag and create the GitHub Release
+  id-token: write # signs the npm provenance statement
 
-# Never let two releases race each other onto the registry.
 concurrency:
   group: publish-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: false # never let two releases race onto the registry
 
 jobs:
   publish:
+    # A manual run from any other branch must not be able to release.
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 24.x
-          registry-url: "https://registry.npmjs.org/"
+          node-version: "26"
+          registry-url: "https://registry.npmjs.org"
           cache: npm
 
-      # ignore-scripts blocks dependency lifecycle scripts, which are an
-      # arbitrary-code-execution path during install.
+      # Dependency lifecycle scripts are an arbitrary-code-execution path during install.
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
       # Publishing a version that already exists is a hard error, so a commit that does not
-      # bump the version should skip the release, not fail it.
+      # bump the version skips the release instead of failing it.
       - name: Decide whether this version needs publishing
         id: check
         run: |
@@ -43,12 +44,34 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
           if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
-            echo "$NAME@$VERSION is already on npm — nothing to release."
+            echo "$NAME@$VERSION is already on npm; nothing to release."
             echo "publish=false" >> "$GITHUB_OUTPUT"
           else
-            echo "$NAME@$VERSION is new — releasing."
+            echo "$NAME@$VERSION is new; releasing."
             echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # The CHANGELOG section becomes the GitHub Release note; a release without one stops here,
+      # before anything reaches the registry.
+      - name: Read the release notes from CHANGELOG.md
+        if: steps.check.outputs.publish == 'true'
+        env:
+          VERSION: ${{ steps.check.outputs.version }}
+        run: |
+          awk -v heading="## [$VERSION]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && (/^## \[/ || /^\[.+\]: /) { exit }
+            found { print }
+          ' CHANGELOG.md > "$RUNNER_TEMP/release-notes.md"
+
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/release-notes.md"; then
+            echo "CHANGELOG.md has no section for $VERSION." >&2
+            exit 1
+          fi
+
+      - name: Lint
+        if: steps.check.outputs.publish == 'true'
+        run: npm run lint
 
       - name: Type-check
         if: steps.check.outputs.publish == 'true'
@@ -62,28 +85,49 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: npm run build
 
-      - name: Verify the packed artifact before publishing
+      - name: Size budget
+        if: steps.check.outputs.publish == 'true'
+        run: npm run size
+
+      - name: Lint the package
+        if: steps.check.outputs.publish == 'true'
+        run: npm run lint:package
+
+      # The tests measure the source; this measures the tarball a consumer installs.
+      - name: Smoke test the packed tarball
         if: steps.check.outputs.publish == 'true'
         run: |
           npm pack
-          WORK="$(mktemp -d)"
-          cd "$WORK"
+          cd "$(mktemp -d)"
           npm init -y >/dev/null
-          npm install --ignore-scripts "$GITHUB_WORKSPACE"/handijit-utils-*.tgz
+          npm install --ignore-scripts "$GITHUB_WORKSPACE"/*.tgz
 
-          cat > smoke.cjs <<'EOF'
-          const { isDeepEqual, deepClone } = require("@handijit/utils");
+          cat > esm.mjs <<'EOF'
+          import { deepClone, isDeepEqual } from "@handijit/utils";
           if (isDeepEqual(new URL("https://a.com"), new URL("https://b.com"))) {
-            throw new Error("isDeepEqual is broken");
+            throw new Error("ESM entry is broken: isDeepEqual");
           }
           if (!(deepClone(new Map([["a", 1]])) instanceof Map)) {
-            throw new Error("deepClone is broken");
+            throw new Error("ESM entry is broken: deepClone");
+          }
+          console.log("ESM entry OK");
+          EOF
+
+          cat > cjs.cjs <<'EOF'
+          const { deepClone, isDeepEqual } = require("@handijit/utils");
+          if (isDeepEqual(new URL("https://a.com"), new URL("https://b.com"))) {
+            throw new Error("CJS entry is broken: isDeepEqual");
+          }
+          if (!(deepClone(new Map([["a", 1]])) instanceof Map)) {
+            throw new Error("CJS entry is broken: deepClone");
           }
           console.log("CJS entry OK");
           EOF
 
-          node smoke.cjs
+          node esm.mjs
+          node cjs.cjs
 
+      # prepublishOnly re-runs `npm run verify` here as the last gate.
       - name: Publish
         if: steps.check.outputs.publish == 'true'
         run: npm publish --access public --provenance
@@ -98,6 +142,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -a "$TAG" -m "$TAG"
           git push origin "$TAG"
+
+      - name: Create the GitHub Release
+        if: steps.check.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.check.outputs.version }}"
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
 
       - name: Summary
         run: |

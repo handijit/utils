@@ -1,3 +1,4 @@
+/** Expresses `value` as a percentage of `max`, capped at 100 and rounded to two decimals. */
 const normalize = (value: number, max: number): number => {
   // The global `isNaN` coerces first, so `isNaN(null)` is false and a null slipped through this
   // guard to be treated as 0.

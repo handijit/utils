@@ -1,8 +1,7 @@
-/**
- * @jest-environment jsdom
- */
-import isIos from "@/modules/is-ios";
-import isAndroid from "@/modules/is-android";
+import { describe, expect, test } from "vitest";
+
+import isIos from "../lib/modules/is-ios";
+import isAndroid from "../lib/modules/is-android";
 
 const setNavigator = (userAgent: string, maxTouchPoints: number): void => {
   Object.defineProperty(window.navigator, "userAgent", {
@@ -46,8 +45,8 @@ describe("OS detection against a live navigator", () => {
 
   test("should not apply the touch heuristic to an explicit user agent", () => {
     setNavigator("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", 5);
-    expect(
-      isIos("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)")
-    ).toBe(false);
+    expect(isIos("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)")).toBe(
+      false
+    );
   });
 });

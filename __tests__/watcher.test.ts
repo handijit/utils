@@ -1,8 +1,10 @@
-import watcher from "@/modules/watcher";
+import { describe, expect, test, vi } from "vitest";
+
+import watcher from "../lib/modules/watcher";
 
 describe("watcher tests", () => {
   test("should trigger onChange when value changes", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ count: 0 }, onChange);
 
     state.count = 1;
@@ -12,7 +14,7 @@ describe("watcher tests", () => {
   });
 
   test("should not trigger onChange when same value is assigned", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ count: 0 }, onChange);
 
     state.count = 0;
@@ -21,7 +23,7 @@ describe("watcher tests", () => {
   });
 
   test("should watch multiple fields", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ count: 0, name: "Ahmet" }, onChange);
 
     state.count = 5;
@@ -33,7 +35,7 @@ describe("watcher tests", () => {
   });
 
   test("should not trigger onChange when NaN is assigned to NaN", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ value: NaN }, onChange);
 
     state.value = NaN;
@@ -42,7 +44,7 @@ describe("watcher tests", () => {
   });
 
   test("should pass undefined as old value when transitioning from undefined", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ label: undefined as string | undefined }, onChange);
 
     state.label = "test";
@@ -52,7 +54,7 @@ describe("watcher tests", () => {
 
   test("should mutate the original object through proxy", () => {
     const original = { count: 0 };
-    const state = watcher(original, jest.fn());
+    const state = watcher(original, vi.fn());
 
     state.count = 42;
 
@@ -60,7 +62,7 @@ describe("watcher tests", () => {
   });
 
   test("should create a new key even when the assigned value is undefined", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({} as { label?: string }, onChange);
 
     state.label = undefined;
@@ -70,7 +72,7 @@ describe("watcher tests", () => {
   });
 
   test("should still skip a redundant assignment on an existing key", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ label: undefined as string | undefined }, onChange);
 
     state.label = undefined;
@@ -79,7 +81,7 @@ describe("watcher tests", () => {
   });
 
   test("should report deletions", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher({ count: 7 } as { count?: number }, onChange);
 
     delete state.count;
@@ -89,8 +91,11 @@ describe("watcher tests", () => {
   });
 
   test("should ignore deletion of a key that does not exist", () => {
-    const onChange = jest.fn();
-    const state = watcher({ count: 1 } as { count?: number; other?: number }, onChange);
+    const onChange = vi.fn();
+    const state = watcher(
+      { count: 1 } as { count?: number; other?: number },
+      onChange
+    );
 
     delete state.other;
 
@@ -98,7 +103,7 @@ describe("watcher tests", () => {
   });
 
   test("should route assignments through the target's setters", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     let backing = 0;
     const state = watcher(
       {
@@ -119,7 +124,7 @@ describe("watcher tests", () => {
   });
 
   test("should not report a change when the write is rejected", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const state = watcher(Object.freeze({ count: 0 }), onChange) as {
       count: number;
     };
@@ -132,7 +137,7 @@ describe("watcher tests", () => {
   });
 
   test("should not report a change when the deletion is rejected", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const target = {} as { pinned?: number };
     Object.defineProperty(target, "pinned", {
       value: 1,
@@ -150,7 +155,7 @@ describe("watcher tests", () => {
   });
 
   test("should track array mutations", () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const list = watcher([1, 2] as number[], onChange);
 
     list.push(3);

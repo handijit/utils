@@ -1,4 +1,6 @@
-import normalize from "@/modules/normalize";
+import { describe, expect, test } from "vitest";
+
+import normalize from "../lib/modules/normalize";
 
 describe("normalize tests", () => {
   test("should correctly normalize value to percentage", () => {

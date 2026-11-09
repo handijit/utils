@@ -1,4 +1,6 @@
-import isBoolean from "@/modules/is-boolean";
+import { describe, expect, test } from "vitest";
+
+import isBoolean from "../lib/modules/is-boolean";
 
 describe("isBoolean tests", () => {
   test("should return false", () => {

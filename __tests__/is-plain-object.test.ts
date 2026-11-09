@@ -1,4 +1,6 @@
-import isPlainObject from "@/modules/is-plain-object";
+import { describe, expect, test } from "vitest";
+
+import isPlainObject from "../lib/modules/is-plain-object";
 describe("isPlainObject tests", () => {
   test("it should return true when got empty plain object", () => {
     expect(isPlainObject({})).toBeTruthy();

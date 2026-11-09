@@ -7,8 +7,8 @@ const ownKeys = (val: object): Array<string | symbol> => {
   const keys: Array<string | symbol> = Object.keys(val);
   const symbols = Object.getOwnPropertySymbols(val);
   for (let i = 0; i < symbols.length; i++) {
-    if (Object.prototype.propertyIsEnumerable.call(val, symbols[i])) {
-      keys.push(symbols[i]);
+    if (Object.prototype.propertyIsEnumerable.call(val, symbols[i] as symbol)) {
+      keys.push(symbols[i] as symbol);
     }
   }
   return keys;
@@ -56,7 +56,10 @@ const equalMaps = (
   for (const [key, value] of unmatched) {
     let matched = false;
     for (const candidate of candidates) {
-      if (equals(key, candidate, seen) && equals(value, b.get(candidate), seen)) {
+      if (
+        equals(key, candidate, seen) &&
+        equals(value, b.get(candidate), seen)
+      ) {
         candidates.delete(candidate);
         matched = true;
         break;
@@ -229,7 +232,7 @@ const equals = (
   if (keysOne.length !== keysTwo.length) return false;
 
   for (let i = 0; i < keysOne.length; i++) {
-    const key = keysOne[i];
+    const key = keysOne[i] as string | symbol;
     if (!Object.prototype.hasOwnProperty.call(valTwo, key)) return false;
     if (
       !equals(

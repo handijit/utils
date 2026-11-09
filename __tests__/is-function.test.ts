@@ -1,4 +1,6 @@
-import isFunction from "@/modules/is-function";
+import { describe, expect, test } from "vitest";
+
+import isFunction from "../lib/modules/is-function";
 describe("isFunction tests", () => {
   test("should return false while param is equal NaN", () => {
     expect(isFunction(NaN)).toBeFalsy();
