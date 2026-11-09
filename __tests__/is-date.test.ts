@@ -1,4 +1,6 @@
-import isDate from "@/modules/is-date";
+import { describe, expect, test } from "vitest";
+
+import isDate from "../lib/modules/is-date";
 
 describe("isDate tests", () => {
   test("should return false", () => {

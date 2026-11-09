@@ -1,4 +1,6 @@
-import isObject from "@/modules/is-object";
+import { describe, expect, test } from "vitest";
+
+import isObject from "../lib/modules/is-object";
 describe("isObject tests", () => {
   test("should return false while param is equal array", () => {
     expect(isObject([])).toBeTruthy();

@@ -1,4 +1,6 @@
-import isNull from "@/modules/is-null";
+import { describe, expect, test } from "vitest";
+
+import isNull from "../lib/modules/is-null";
 
 describe("isNull tests", () => {
   test("should return true for null", () => {

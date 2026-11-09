@@ -1,14 +1,18 @@
-import sleep from "@/modules/sleep";
-import withRetry from "@/modules/with-retry";
+import { describe, expect, test, vi } from "vitest";
 
-jest.mock("@/modules/sleep", () => jest.fn().mockResolvedValue(undefined));
+import sleep from "../lib/modules/sleep";
+import withRetry from "../lib/modules/with-retry";
+
+vi.mock("../lib/modules/sleep", () => ({
+  default: vi.fn().mockResolvedValue(undefined),
+}));
 
 class NetworkError extends Error {}
 class OtherError extends Error {}
 
 describe("withRetry tests", () => {
   test("should return result on successful call", async () => {
-    const fn = jest.fn().mockResolvedValue("ok");
+    const fn = vi.fn().mockResolvedValue("ok");
     const result = await withRetry({
       fn,
       retries: 3,
@@ -20,7 +24,7 @@ describe("withRetry tests", () => {
   });
 
   test("should retry on specified error type", async () => {
-    const fn = jest
+    const fn = vi
       .fn()
       .mockRejectedValueOnce(new NetworkError())
       .mockRejectedValueOnce(new NetworkError())
@@ -37,15 +41,15 @@ describe("withRetry tests", () => {
   });
 
   test("should throw immediately without retrying on different error type", async () => {
-    const fn = jest.fn().mockRejectedValue(new OtherError());
+    const fn = vi.fn().mockRejectedValue(new OtherError());
     await expect(
-      withRetry({ fn, retries: 3, delay: 100, exception: NetworkError }),
+      withRetry({ fn, retries: 3, delay: 100, exception: NetworkError })
     ).rejects.toThrow(OtherError);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should return null when all retries fail", async () => {
-    const fn = jest.fn().mockRejectedValue(new NetworkError());
+    const fn = vi.fn().mockRejectedValue(new NetworkError());
     const result = await withRetry({
       fn,
       retries: 3,
@@ -57,26 +61,26 @@ describe("withRetry tests", () => {
   });
 
   test("should call sleep with exponential backoff", async () => {
-    const fn = jest.fn().mockRejectedValue(new NetworkError());
+    const fn = vi.fn().mockRejectedValue(new NetworkError());
     await withRetry({ fn, retries: 3, delay: 100, exception: NetworkError });
     expect(sleep).toHaveBeenNthCalledWith(1, 100);
     expect(sleep).toHaveBeenNthCalledWith(2, 200);
   });
 
   test("should not call sleep when retries is 1", async () => {
-    const fn = jest.fn().mockRejectedValue(new NetworkError());
+    const fn = vi.fn().mockRejectedValue(new NetworkError());
     await withRetry({ fn, retries: 1, delay: 100, exception: NetworkError });
     expect(sleep).not.toHaveBeenCalled();
   });
 
   test("should return null without invoking fn when retries is not positive", async () => {
-    const fn = jest.fn().mockResolvedValue("ok");
+    const fn = vi.fn().mockResolvedValue("ok");
 
     await expect(
-      withRetry({ fn, retries: 0, delay: 100, exception: NetworkError }),
+      withRetry({ fn, retries: 0, delay: 100, exception: NetworkError })
     ).resolves.toBeNull();
     await expect(
-      withRetry({ fn, retries: -1, delay: 100, exception: NetworkError }),
+      withRetry({ fn, retries: -1, delay: 100, exception: NetworkError })
     ).resolves.toBeNull();
 
     expect(fn).not.toHaveBeenCalled();

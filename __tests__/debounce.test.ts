@@ -1,84 +1,86 @@
-import debounce from "@/modules/debounce";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+import debounce from "../lib/modules/debounce";
 
 describe("debounce tests", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(1_000_000);
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000_000);
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test("should not invoke before the wait elapses", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced();
-    jest.advanceTimersByTime(99);
+    vi.advanceTimersByTime(99);
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(1);
+    vi.advanceTimersByTime(1);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should collapse a burst into a single trailing call with the last arguments", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced("a");
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced("b");
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced("c");
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("c");
   });
 
   test("should re-arm instead of invoking when a call lands mid-window", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced();
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced();
 
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should start a new window after the trailing call", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced("first");
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     debounced("second");
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenNthCalledWith(2, "second");
   });
 
   test("should invoke immediately with leading and skip the trailing call", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { leading: true });
 
     debounced("a");
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("a");
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should invoke on both edges of a burst when leading is enabled", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { leading: true });
 
     debounced("a");
@@ -86,118 +88,118 @@ describe("debounce tests", () => {
     debounced("c");
     expect(fn).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenNthCalledWith(2, "c");
   });
 
   test("should invoke only once per window with trailing disabled", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { leading: true, trailing: false });
 
     debounced("a");
     debounced("b");
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
 
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("a");
   });
 
   test("should never invoke when both edges are disabled", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { leading: false, trailing: false });
 
     debounced();
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
 
     expect(fn).not.toHaveBeenCalled();
   });
 
   test("should invoke at maxWait while calls keep arriving", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { maxWait: 250 });
 
     for (let i = 0; i < 4; i++) {
       debounced(i);
-      jest.advanceTimersByTime(50);
+      vi.advanceTimersByTime(50);
       expect(fn).not.toHaveBeenCalled();
     }
 
     debounced(4);
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
 
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith(4);
   });
 
   test("should invoke on call when the maxWait deadline passed unattended", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { maxWait: 250 });
 
     debounced("a");
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced("b");
-    jest.setSystemTime(Date.now() + 300);
+    vi.setSystemTime(Date.now() + 300);
     debounced("c");
 
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("c");
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should clamp a maxWait shorter than the wait", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { maxWait: 10 });
 
     debounced();
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced();
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should cut the re-armed timer short at maxWait", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { maxWait: 120 });
 
     debounced();
-    jest.advanceTimersByTime(50);
+    vi.advanceTimersByTime(50);
     debounced();
 
-    jest.advanceTimersByTime(69);
+    vi.advanceTimersByTime(69);
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(1);
+    vi.advanceTimersByTime(1);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("should keep waiting when the window elapsed during a stall", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced("a");
-    jest.setSystemTime(Date.now() + 300);
+    vi.setSystemTime(Date.now() + 300);
     debounced("b");
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(99);
+    vi.advanceTimersByTime(99);
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(1);
+    vi.advanceTimersByTime(1);
     expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("b");
   });
 
   test("should treat a backwards clock jump as a fresh window", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { maxWait: 500 });
 
     debounced("a");
-    jest.setSystemTime(Date.now() - 10_000);
+    vi.setSystemTime(Date.now() - 10_000);
     debounced("b");
 
     expect(fn).toHaveBeenCalledTimes(1);
@@ -205,18 +207,18 @@ describe("debounce tests", () => {
   });
 
   test("should schedule on the next tick when wait is not positive", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, -50);
 
     debounced();
     expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(0);
+    vi.advanceTimersByTime(0);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("cancel should drop the pending call", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced();
@@ -225,12 +227,12 @@ describe("debounce tests", () => {
     debounced.cancel();
     expect(debounced.pending()).toBe(false);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(fn).not.toHaveBeenCalled();
   });
 
   test("cancel should be a no-op when nothing is pending", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     expect(() => debounced.cancel()).not.toThrow();
@@ -239,7 +241,7 @@ describe("debounce tests", () => {
   });
 
   test("cancel should leave the next call to start a clean window", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100, { leading: true });
 
     debounced("a");
@@ -251,7 +253,7 @@ describe("debounce tests", () => {
   });
 
   test("flush should invoke the pending call immediately", () => {
-    const fn = jest.fn((value: number) => value * 2);
+    const fn = vi.fn((value: number) => value * 2);
     const debounced = debounce(fn, 100);
 
     debounced(21);
@@ -259,25 +261,25 @@ describe("debounce tests", () => {
     expect(fn).toHaveBeenCalledTimes(1);
     expect(debounced.pending()).toBe(false);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("flush should return the last result when nothing is pending", () => {
-    const fn = jest.fn((value: number) => value * 2);
+    const fn = vi.fn((value: number) => value * 2);
     const debounced = debounce(fn, 100);
 
     expect(debounced.flush()).toBeUndefined();
 
     debounced(5);
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(debounced.flush()).toBe(10);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   test("flush should drop the pending call when trailing is disabled", () => {
-    const fn = jest.fn((value: number) => value * 2);
+    const fn = vi.fn((value: number) => value * 2);
     const debounced = debounce(fn, 100, { leading: true, trailing: false });
 
     debounced(3);
@@ -287,7 +289,7 @@ describe("debounce tests", () => {
   });
 
   test("flush should not replay a call the leading edge already made", () => {
-    const fn = jest.fn((value: number) => value * 2);
+    const fn = vi.fn((value: number) => value * 2);
     const debounced = debounce(fn, 100, { leading: true });
 
     debounced(4);
@@ -296,7 +298,7 @@ describe("debounce tests", () => {
   });
 
   test("should schedule a trailing call made shortly after a flush", () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const debounced = debounce(fn, 100);
 
     debounced("a");
@@ -304,19 +306,19 @@ describe("debounce tests", () => {
     debounced("b");
 
     expect(fn).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenNthCalledWith(2, "b");
   });
 
   test("should return the cached result between invocations", () => {
-    const fn = jest.fn((value: number) => value * 2);
+    const fn = vi.fn((value: number) => value * 2);
     const debounced = debounce(fn, 100, { leading: true });
 
     expect(debounced(1)).toBe(2);
     expect(debounced(9)).toBe(2);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(debounced(3)).toBe(6);
   });
 
@@ -330,38 +332,38 @@ describe("debounce tests", () => {
     };
 
     counter.add(1, 2);
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(calls).toEqual([[5, 1, 2]]);
   });
 
   test("should start a fresh window for a re-entrant call", () => {
     const seen: string[] = [];
-    const fn = jest.fn((label: string): void => {
+    const fn = vi.fn((label: string): void => {
       seen.push(label);
       if (seen.length === 1) debounced("inner");
     });
     const debounced = debounce(fn, 100);
 
     debounced("outer");
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(fn).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenNthCalledWith(2, "inner");
   });
 
   test("should keep separate state per debounced wrapper", () => {
-    const first = jest.fn();
-    const second = jest.fn();
+    const first = vi.fn();
+    const second = vi.fn();
     const debouncedFirst = debounce(first, 100);
     const debouncedSecond = debounce(second, 100);
 
     debouncedFirst();
     debouncedSecond();
     debouncedFirst.cancel();
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
 
     expect(first).not.toHaveBeenCalled();
     expect(second).toHaveBeenCalledTimes(1);

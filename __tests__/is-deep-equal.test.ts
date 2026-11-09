@@ -1,4 +1,6 @@
-import isDeepEqual from "@/modules/is-deep-equal";
+import { describe, expect, test } from "vitest";
+
+import isDeepEqual from "../lib/modules/is-deep-equal";
 
 describe("isDeepEqual tests", () => {
   describe("primitives", () => {
@@ -368,16 +370,13 @@ describe("isDeepEqual tests", () => {
 
   describe("boxed primitives", () => {
     test("should compare by primitive value", () => {
-      /* eslint-disable no-new-wrappers */
       expect(isDeepEqual(new Number(1), new Number(1))).toBe(true);
       expect(isDeepEqual(new Number(1), new Number(2))).toBe(false);
       expect(isDeepEqual(new String("a"), new String("a"))).toBe(true);
       expect(isDeepEqual(new Boolean(true), new Boolean(true))).toBe(true);
-      /* eslint-enable no-new-wrappers */
     });
 
     test("should not equate a boxed primitive with its primitive", () => {
-      // eslint-disable-next-line no-new-wrappers
       expect(isDeepEqual(new Number(1), 1)).toBe(false);
     });
   });
@@ -422,7 +421,12 @@ describe("isDeepEqual tests", () => {
     test("should not equate distinct functions with identical source", () => {
       const make = (k: number) => (x: number) => x + k;
       expect(isDeepEqual(make(1), make(99))).toBe(false);
-      expect(isDeepEqual(() => 10, () => 10)).toBe(false);
+      expect(
+        isDeepEqual(
+          () => 10,
+          () => 10
+        )
+      ).toBe(false);
     });
 
     test("should compare objects holding the same function reference", () => {
@@ -534,7 +538,11 @@ describe("isDeepEqual tests", () => {
           location: { lat: 41.0082, long: 28.9784 },
         },
         workExperience: [
-          { company: "Company A", years: 2, technologies: ["React", "Node.js"] },
+          {
+            company: "Company A",
+            years: 2,
+            technologies: ["React", "Node.js"],
+          },
           { company: "Company B", years: 1, technologies: ["Java", "Spring"] },
         ],
       },

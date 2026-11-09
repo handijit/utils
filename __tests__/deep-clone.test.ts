@@ -1,4 +1,6 @@
-import deepClone from "@/modules/deep-clone";
+import { describe, expect, test } from "vitest";
+
+import deepClone from "../lib/modules/deep-clone";
 describe("deepClone tests", () => {
   test("should return object after deepClone", () => {
     const clonedVal = deepClone({ name: "test" });
@@ -138,26 +140,28 @@ describe("deepClone tests", () => {
       objToCopy.details.workExperience
     );
 
-    expect(deepCopyObj.languages[0].awards).toStrictEqual(
-      objToCopy.languages[0].awards
+    expect(deepCopyObj.languages[0]!.awards).toStrictEqual(
+      objToCopy.languages[0]!.awards
     );
-    expect(deepCopyObj.languages[0].awards).not.toBe(
-      objToCopy.languages[0].awards
+    expect(deepCopyObj.languages[0]!.awards).not.toBe(
+      objToCopy.languages[0]!.awards
     );
 
-    expect(deepCopyObj.languages[0].awards[0].otherWinners).toStrictEqual(
-      objToCopy.languages[0].awards[0].otherWinners
+    expect(deepCopyObj.languages[0]!.awards[0]!.otherWinners).toStrictEqual(
+      objToCopy.languages[0]!.awards[0]!.otherWinners
     );
-    expect(deepCopyObj.languages[0].awards[0].otherWinners).not.toBe(
-      objToCopy.languages[0].awards[0].otherWinners
+    expect(deepCopyObj.languages[0]!.awards[0]!.otherWinners).not.toBe(
+      objToCopy.languages[0]!.awards[0]!.otherWinners
     );
 
     expect(
-      deepCopyObj.languages[0].awards[0].otherWinners[2].children
-    ).toStrictEqual(objToCopy.languages[0].awards[0].otherWinners[2].children);
+      deepCopyObj.languages[0]!.awards[0]!.otherWinners[2]!.children
+    ).toStrictEqual(
+      objToCopy.languages[0]!.awards[0]!.otherWinners[2]!.children
+    );
     expect(
-      deepCopyObj.languages[0].awards[0].otherWinners[2].children
-    ).not.toBe(objToCopy.languages[0].awards[0].otherWinners[2].children);
+      deepCopyObj.languages[0]!.awards[0]!.otherWinners[2]!.children
+    ).not.toBe(objToCopy.languages[0]!.awards[0]!.otherWinners[2]!.children);
 
     expect(deepCopyObj.createdAt).toStrictEqual(objToCopy.createdAt);
     expect(deepCopyObj.createdAt).not.toBe(objToCopy.createdAt);
@@ -429,6 +433,7 @@ describe("deepClone tests", () => {
 
   describe("arrays", () => {
     test("should preserve length and holes of sparse arrays", () => {
+      // eslint-disable-next-line no-sparse-arrays -- holes are the input under test
       const source = [, 1, , 2] as unknown[];
 
       const copy = deepClone(source);
@@ -460,11 +465,11 @@ describe("deepClone tests", () => {
     };
 
     const copy = deepClone(source);
-    copy.list[0].n = 100;
+    copy.list[0]!.n = 100;
     (copy.map.get("k") as { n: number }).n = 200;
     copy.when.setFullYear(1999);
 
-    expect(source.list[0].n).toBe(1);
+    expect(source.list[0]!.n).toBe(1);
     expect((source.map.get("k") as { n: number }).n).toBe(2);
     expect(source.when.getUTCFullYear()).toBe(2020);
   });

@@ -1,4 +1,6 @@
-import isNumber from "@/modules/is-number";
+import { describe, expect, test } from "vitest";
+
+import isNumber from "../lib/modules/is-number";
 describe("isNumber tests", () => {
   test("should return false while param is equal object", () => {
     expect(isNumber({})).toBeFalsy();
@@ -35,7 +37,6 @@ describe("isNumber finiteness", () => {
 
   test("should reject numeric strings and boxed numbers", () => {
     expect(isNumber("5")).toBe(false);
-    // eslint-disable-next-line no-new-wrappers
     expect(isNumber(new Number(5))).toBe(false);
   });
 });

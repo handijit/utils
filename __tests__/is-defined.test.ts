@@ -1,4 +1,6 @@
-import isDefined from "@/modules/is-defined";
+import { describe, expect, test } from "vitest";
+
+import isDefined from "../lib/modules/is-defined";
 
 describe("isDefined tests", () => {
   test("should return true for primitive values", () => {

@@ -1,11 +1,13 @@
-import isDefined from "@/modules/is-defined";
-import isArray from "@/modules/is-array";
-import isPlainObject from "@/modules/is-plain-object";
-import isFunction from "@/modules/is-function";
-import isNumber from "@/modules/is-number";
-import sleep from "@/modules/sleep";
-import deepClone from "@/modules/deep-clone";
-import debounce from "@/modules/debounce";
+import { describe, expect, test } from "vitest";
+
+import isDefined from "../lib/modules/is-defined";
+import isArray from "../lib/modules/is-array";
+import isPlainObject from "../lib/modules/is-plain-object";
+import isFunction from "../lib/modules/is-function";
+import isNumber from "../lib/modules/is-number";
+import sleep from "../lib/modules/sleep";
+import deepClone from "../lib/modules/deep-clone";
+import debounce from "../lib/modules/debounce";
 
 describe("type surface", () => {
   test("isDefined should narrow away null and undefined", () => {

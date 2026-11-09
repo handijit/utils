@@ -1,4 +1,6 @@
-import isUndefined from "@/modules/is-undefined";
+import { describe, expect, test } from "vitest";
+
+import isUndefined from "../lib/modules/is-undefined";
 
 describe("isUndefined tests", () => {
   test("should return true for undefined", () => {
