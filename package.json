@@ -1,6 +1,6 @@
 {
   "name": "@handijit/utils",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Dependency-free TypeScript utilities: type guards that really narrow, structural equality and cloning that handle Map, Set and circular references, plus debounce, retry and other everyday helpers.",
   "author": "Ahmet ilhan <ahmetilhan.dev@gmail.com>",
   "license": "MIT",
