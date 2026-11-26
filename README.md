@@ -1,12 +1,12 @@
-# @handijit/utils
+# @handijitcom/utils
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@handijit/utils"><img alt="npm version" src="https://img.shields.io/npm/v/@handijit/utils.svg" /></a>
-  <a href="https://www.npmjs.com/package/@handijit/utils"><img alt="npm downloads" src="https://img.shields.io/npm/dy/@handijit/utils" /></a>
+  <a href="https://www.npmjs.com/package/@handijitcom/utils"><img alt="npm version" src="https://img.shields.io/npm/v/@handijitcom/utils.svg" /></a>
+  <a href="https://www.npmjs.com/package/@handijitcom/utils"><img alt="npm downloads" src="https://img.shields.io/npm/dy/@handijitcom/utils" /></a>
   <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue" /></a>
 </p>
 
-> Formerly published as `@ahmetilhn/handy-utils`. `@handijit/utils` 1.0.0 is the
+> Formerly published as `@ahmetilhn/handy-utils`. `@handijitcom/utils` 1.0.0 is the
 > same code as `@ahmetilhn/handy-utils` 4.2.0.
 
 A small, dependency-free toolkit of the checks and helpers most projects end up
@@ -64,15 +64,15 @@ evergreen release since 2022.
 ## Installation
 
 ```bash
-npm install @handijit/utils
+npm install @handijitcom/utils
 ```
 
 ```bash
-yarn add @handijit/utils
+yarn add @handijitcom/utils
 ```
 
 ```bash
-pnpm add @handijit/utils
+pnpm add @handijitcom/utils
 ```
 
 ## Quick start
@@ -80,7 +80,7 @@ pnpm add @handijit/utils
 Everything is a named export, so bundlers drop what you do not use.
 
 ```ts
-import { isDeepEqual, deepClone, isDefined, sleep } from "@handijit/utils";
+import { isDeepEqual, deepClone, isDefined, sleep } from "@handijitcom/utils";
 
 isDeepEqual({ a: [1, 2] }, { a: [1, 2] }); // true
 deepClone(new Map([["k", { n: 1 }]])); // a real Map, deeply copied
@@ -94,7 +94,7 @@ await sleep(200);
 CommonJS works the same way:
 
 ```js
-const { isDeepEqual } = require("@handijit/utils");
+const { isDeepEqual } = require("@handijitcom/utils");
 ```
 
 ## When to use it
@@ -881,7 +881,7 @@ Pass `exception: Error` to retry every error. Note that `retries: 0` returns
 ### Skip an update when nothing changed
 
 ```ts
-import { deepClone, isDeepEqual } from "@handijit/utils";
+import { deepClone, isDeepEqual } from "@handijitcom/utils";
 
 let saved = deepClone(form);
 
@@ -895,7 +895,7 @@ const onSubmit = async () => {
 ### Debounce a search box and clean up after it
 
 ```ts
-import { debounce } from "@handijit/utils";
+import { debounce } from "@handijitcom/utils";
 
 const search = debounce((term: string) => fetchResults(term), 300, {
   maxWait: 1000, // a user who never stops typing still gets results
@@ -914,7 +914,7 @@ view is gone.
 ### Retry a flaky request, and only that
 
 ```ts
-import { withRetry } from "@handijit/utils";
+import { withRetry } from "@handijitcom/utils";
 
 class NetworkError extends Error {}
 
@@ -941,7 +941,7 @@ if (items === null) {
 ### Persist an object on every change
 
 ```ts
-import { debounce, watcher } from "@handijit/utils";
+import { debounce, watcher } from "@handijitcom/utils";
 
 const persist = debounce(
   () => localStorage.setItem("settings", JSON.stringify(settings)),
@@ -1064,13 +1064,13 @@ Entry points:
 | TypeScript         | `build/index.d.mts` for `import`, `build/index.d.ts` for `require` | the `types` condition of each branch, top-level `types` |
 
 ```html
-<script src="https://unpkg.com/@handijit/utils@2"></script>
+<script src="https://unpkg.com/@handijitcom/utils@2"></script>
 <script>
   handijitUtils.isDeepEqual([1, 2], [1, 2]); // true
 </script>
 ```
 
-Only the package root and `@handijit/utils/package.json` can be imported; there
+Only the package root and `@handijitcom/utils/package.json` can be imported; there
 are no deep import paths.
 
 ---
@@ -1088,7 +1088,7 @@ import {
   type DebounceOptions,
   type Debounced,
   type WatcherCallback,
-} from "@handijit/utils";
+} from "@handijitcom/utils";
 ```
 
 Every `is*` function is a type predicate, so narrowing works in conditionals,
@@ -1115,14 +1115,14 @@ const copy = deepClone({ list: [1, 2], when: new Date() });
 
 ## FAQ and troubleshooting
 
-**`SyntaxError: The requested module '@handijit/utils' does not provide an
+**`SyntaxError: The requested module '@handijitcom/utils' does not provide an
 export named 'default'`**
 There is no default export. Use named imports, or `import * as utils from
-"@handijit/utils"` when you want everything on one object.
+"@handijitcom/utils"` when you want everything on one object.
 
-**`ERR_PACKAGE_PATH_NOT_EXPORTED` for `@handijit/utils/build/...`**
+**`ERR_PACKAGE_PATH_NOT_EXPORTED` for `@handijitcom/utils/build/...`**
 Since 2.0.0 the package declares an `exports` map, and only the root is public.
-Import from `"@handijit/utils"`.
+Import from `"@handijitcom/utils"`.
 
 **Does it work with Jest?**
 Yes. Jest resolves the `require` condition and loads `build/index.cjs`, so no
@@ -1174,24 +1174,24 @@ dropping a test.
 
 | Case                                                             | 1.x                                            | 2.0.0                                                                    |
 | ---------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
-| `require("@handijit/utils")`                                     | `build/index.js`                               | `build/index.cjs`; same exports                                          |
-| `import { … } from "@handijit/utils"` in Node.js                 | The CommonJS file, through interop             | `build/index.mjs`, a real ES module                                      |
-| `import utils from "@handijit/utils"` (default import)           | Worked in Node.js ESM through CommonJS interop | `SyntaxError`; use named imports or `import * as utils`                  |
-| `require("@handijit/utils/build/index.js")` and other deep paths | Resolved                                       | `ERR_PACKAGE_PATH_NOT_EXPORTED`; import from the package root            |
-| `require("@handijit/utils/package.json")`                        | Resolved                                       | Still resolved, now through `exports`                                    |
+| `require("@handijitcom/utils")`                                     | `build/index.js`                               | `build/index.cjs`; same exports                                          |
+| `import { … } from "@handijitcom/utils"` in Node.js                 | The CommonJS file, through interop             | `build/index.mjs`, a real ES module                                      |
+| `import utils from "@handijitcom/utils"` (default import)           | Worked in Node.js ESM through CommonJS interop | `SyntaxError`; use named imports or `import * as utils`                  |
+| `require("@handijitcom/utils/build/index.js")` and other deep paths | Resolved                                       | `ERR_PACKAGE_PATH_NOT_EXPORTED`; import from the package root            |
+| `require("@handijitcom/utils/package.json")`                        | Resolved                                       | Still resolved, now through `exports`                                    |
 | Published JavaScript                                             | One minified CommonJS file                     | Unminified ESM and CommonJS with source maps, plus a minified UMD bundle |
 | Tree-shaking                                                     | Depended on the bundler's CommonJS analysis    | ES module with `"sideEffects": false`                                    |
 | Type declarations                                                | `build/index.d.ts`                             | `build/index.d.ts` and an identical `build/index.d.mts`                  |
 | `<script>` usage                                                 | Not available                                  | `build/index.umd.js`, global `handijitUtils`                             |
 | Node.js floor                                                    | 24                                             | 24                                                                       |
 
-If you only ever wrote `import { … } from "@handijit/utils"` or
-`const { … } = require("@handijit/utils")`, there is nothing to change.
+If you only ever wrote `import { … } from "@handijitcom/utils"` or
+`const { … } = require("@handijitcom/utils")`, there is nothing to change.
 
 ### From `@ahmetilhn/handy-utils` 3.x
 
 These changes shipped in `@ahmetilhn/handy-utils` 4.0.0 and are part of every
-`@handijit/utils` release. `isDeepEqual`, `deepClone`, `isPlainObject` and
+`@handijitcom/utils` release. `isDeepEqual`, `deepClone`, `isPlainObject` and
 `isFunction` returned wrong answers for several common inputs; fixing them
 changed observable behaviour.
 
@@ -1256,6 +1256,14 @@ the CHANGELOG section.
 
 A commit that does not change the version is not an error — the workflow sees
 the version already on npm and skips the release.
+
+<!-- handijit:about:start -->
+## About Han Dijit
+
+`@handijitcom/utils` is built and maintained by **[Han Dijit](https://www.handijit.com)**, a software company serving businesses across Türkiye: web, e-commerce, mobile, artificial intelligence, cyber security and enterprise software projects.
+
+[www.handijit.com](https://www.handijit.com) · [All Han Dijit packages on npm](https://www.npmjs.com/org/handijitcom)
+<!-- handijit:about:end -->
 
 ## License
 

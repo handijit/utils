@@ -7,6 +7,15 @@ and the package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-26
+
+First release under the `@handijitcom` npm organization. The package was previously published as `@handijit/utils` (last version 2.0.0); the API is unchanged, only the package name and the version line reset.
+
+### Changed
+
+- Package name: `@handijit/utils` → `@handijitcom/utils`.
+- CI/CD follows the Han Dijit standard (`ci.yml`, `publish.yml`).
+
 ## [2.0.0] - 2026-11-10
 
 The package is now built and resolved differently. The observable behaviour of
