@@ -44,14 +44,17 @@
   "engines": {
     "node": ">=24"
   },
+  "prettier": "@handijitcom/config/prettier",
   "scripts": {
     "build": "sh ./scripts/prod-build.sh",
     "dev": "sh ./scripts/dev-build.sh",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --max-warnings 0 && prettier --check .",
+    "format": "prettier --write .",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run --coverage",
     "size": "node ./scripts/report-size.mjs",
     "lint:package": "publint && attw --pack .",
+    "test:smoke": "sh ./scripts/smoke-test.sh",
     "bench": "node ./scripts/bench.mjs",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build && npm run size && npm run lint:package",
     "prepublishOnly": "npm run verify"
@@ -80,14 +83,13 @@
   ],
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@eslint/js": "^10.0.1",
+    "@handijitcom/config": "^1.0.0",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^26.2.0",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^10.14.0",
-    "eslint-config-prettier": "^10.1.8",
     "jsdom": "^31.0.0",
     "prettier": "^3.9.10",
     "publint": "^0.3.25",
@@ -95,7 +97,6 @@
     "rollup-plugin-dts": "^6.5.1",
     "tslib": "^2.8.1",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.72.2",
     "vitest": "^5.1.0"
   }
 }

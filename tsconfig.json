@@ -1,31 +1,10 @@
 {
+  "extends": "@handijitcom/config/tsconfig/library.json",
   "compilerOptions": {
     // Node 24 (the engines floor) and every evergreen browser since 2022 run ES2022 natively;
     // nothing to downlevel.
     "target": "ES2022",
-    "module": "ESNext",
     // DOM supplies the URL, navigator and timer typings; an API newer than the target is a type error.
-    "lib": ["ES2022", "DOM"],
-    "moduleResolution": "bundler",
-    // An isomorphic library must not lean on Node or test globals.
-    "types": [],
-    "noEmit": false,
-
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noUncheckedIndexedAccess": true,
-    "useUnknownInCatchVariables": true,
-
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  },
-  "include": ["lib"],
-  "exclude": ["node_modules", "__tests__", "build"]
+    "lib": ["ES2022", "DOM"]
+  }
 }

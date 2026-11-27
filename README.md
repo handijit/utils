@@ -1172,18 +1172,18 @@ functions is unchanged**: the source compiles to byte-identical code under the
 1.0.0 build settings, and the 1.0.0 test suite was ported to Vitest without
 dropping a test.
 
-| Case                                                             | 1.x                                            | 2.0.0                                                                    |
-| ---------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
+| Case                                                                | 1.x                                            | 2.0.0                                                                    |
+| ------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
 | `require("@handijitcom/utils")`                                     | `build/index.js`                               | `build/index.cjs`; same exports                                          |
 | `import { … } from "@handijitcom/utils"` in Node.js                 | The CommonJS file, through interop             | `build/index.mjs`, a real ES module                                      |
 | `import utils from "@handijitcom/utils"` (default import)           | Worked in Node.js ESM through CommonJS interop | `SyntaxError`; use named imports or `import * as utils`                  |
 | `require("@handijitcom/utils/build/index.js")` and other deep paths | Resolved                                       | `ERR_PACKAGE_PATH_NOT_EXPORTED`; import from the package root            |
 | `require("@handijitcom/utils/package.json")`                        | Resolved                                       | Still resolved, now through `exports`                                    |
-| Published JavaScript                                             | One minified CommonJS file                     | Unminified ESM and CommonJS with source maps, plus a minified UMD bundle |
-| Tree-shaking                                                     | Depended on the bundler's CommonJS analysis    | ES module with `"sideEffects": false`                                    |
-| Type declarations                                                | `build/index.d.ts`                             | `build/index.d.ts` and an identical `build/index.d.mts`                  |
-| `<script>` usage                                                 | Not available                                  | `build/index.umd.js`, global `handijitUtils`                             |
-| Node.js floor                                                    | 24                                             | 24                                                                       |
+| Published JavaScript                                                | One minified CommonJS file                     | Unminified ESM and CommonJS with source maps, plus a minified UMD bundle |
+| Tree-shaking                                                        | Depended on the bundler's CommonJS analysis    | ES module with `"sideEffects": false`                                    |
+| Type declarations                                                   | `build/index.d.ts`                             | `build/index.d.ts` and an identical `build/index.d.mts`                  |
+| `<script>` usage                                                    | Not available                                  | `build/index.umd.js`, global `handijitUtils`                             |
+| Node.js floor                                                       | 24                                             | 24                                                                       |
 
 If you only ever wrote `import { … } from "@handijitcom/utils"` or
 `const { … } = require("@handijitcom/utils")`, there is nothing to change.
@@ -1231,9 +1231,14 @@ not interchangeable. Compare functions by reference, as lodash and Node's
 
 ```bash
 npm install
-npm run verify   # lint, typecheck, test with coverage, build, size budget, package lint
-npm run bench    # measure the built output
+npm run verify      # lint (ESLint + Prettier), typecheck, test with coverage, build, size budget, package lint
+npm run test:smoke  # install the packed tarball in a clean project and load it (after a build)
+npm run bench       # measure the built output
 ```
+
+The ESLint, Prettier, TypeScript and Vitest settings come from
+[`@handijitcom/config`](https://github.com/handijit/config)'s library presets;
+CI runs the gate on Node 24 (the engines floor) and 26 (the Active LTS).
 
 287 tests, enforced at 100% for statements, branches, functions and lines. A
 change to a public function comes with its tests, a README update and a
@@ -1258,6 +1263,7 @@ A commit that does not change the version is not an error — the workflow sees
 the version already on npm and skips the release.
 
 <!-- handijit:about:start -->
+
 ## About Han Dijit
 
 `@handijitcom/utils` is built and maintained by **[Han Dijit](https://www.handijit.com)**, a software company serving businesses across Türkiye: web, e-commerce, mobile, artificial intelligence, cyber security and enterprise software projects.
